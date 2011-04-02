@@ -1,0 +1,1 @@
+selectionSort.o: selectionSort.c

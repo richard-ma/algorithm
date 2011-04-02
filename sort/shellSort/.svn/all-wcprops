@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 41
+/svn/!svn/ver/322/trunk/ds/sort/shellSort
+END
+shellSort
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svn/!svn/ver/322/trunk/ds/sort/shellSort/shellSort
+END
+shellSort.c
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/322/trunk/ds/sort/shellSort/shellSort.c
+END
+shellSort.d
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/322/trunk/ds/sort/shellSort/shellSort.d
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 50
+/svn/!svn/ver/322/trunk/ds/sort/shellSort/Makefile
+END
