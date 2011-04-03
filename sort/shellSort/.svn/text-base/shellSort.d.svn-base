@@ -1,0 +1,1 @@
+shellSort.o: shellSort.c
