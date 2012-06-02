@@ -6,9 +6,10 @@
 
 int next[MAX];
 
-int kmp_table(const char *t, int t_len)
+int kmp_table(const char *t)
 {
     int pos = 2, cnd = 0;
+    int t_len = strlen(t);
 
     next[0] = -1; next[1] = 0;
 
@@ -25,9 +26,10 @@ int kmp_table(const char *t, int t_len)
     return 0;
 }
 
-int kmp(const char *s, int s_len, const char *t, int t_len)
+int kmp(const char *s, const char *t)
 {
     int m = 0, i = 0;
+    int s_len = strlen(s), t_len = strlen(t);
 
     while (m + i < s_len) {
         if (t[i] == s[m+i]) {
@@ -59,8 +61,8 @@ int main (int argc, char const* argv[])
 
     s_len = strlen(s); t_len = strlen(t);
 
-    kmp_table(t, t_len);
-    ans = kmp(s, s_len, t, t_len);
+    kmp_table(t);
+    ans = kmp(s, t);
 
     if (ans == s_len) {
         printf("%d No match!\n", ans);
