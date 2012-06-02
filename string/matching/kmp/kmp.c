@@ -50,7 +50,7 @@ int kmp(const char *s, int s_len, const char *t, int t_len)
 
 int main (int argc, char const* argv[])
 {
-    int s_len, t_len;
+    int s_len, t_len, ans;
     char s[MAX], t[MAX];
     memset(next, 0, sizeof(int) * MAX);
 
@@ -59,7 +59,14 @@ int main (int argc, char const* argv[])
 
     s_len = strlen(s); t_len = strlen(t);
 
-    kmp(s, s_len, t, t_len);
+    kmp_table(t, t_len);
+    ans = kmp(s, s_len, t, t_len);
+
+    if (ans == s_len) {
+        printf("%d No match!\n", ans);
+    } else {
+        printf("%d\n", ans);
+    }
 
     return 0;
 }
