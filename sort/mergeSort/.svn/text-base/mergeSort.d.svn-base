@@ -1,0 +1,1 @@
+mergeSort.o: mergeSort.c
