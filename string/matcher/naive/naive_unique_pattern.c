@@ -19,7 +19,7 @@ int basic_pattern(char *source, char *pattern) {
                 continue;
             } else {
                 flg = 0;
-                i += j;
+                i += j; /* 跳过那些不匹配的字符 */
                 break;
             }
         }
