@@ -1,4 +1,4 @@
-DEBUG = True
+DEBUG = False
 
 
 def parent(i: int) -> int:
