@@ -1,5 +1,5 @@
 import unittest
-from Python.src.sort_heap import *
+from Python.src.heap import *
 from random import randint
 from sys import maxsize
 from copy import deepcopy
