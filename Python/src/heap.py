@@ -26,7 +26,7 @@ def max_heapify(A: list, i: int, length: int) -> None:
 
     if largest != i:
         if DEBUG:
-            print("exchange: \t", A[largest], "\t <--> \t", A[i])
+            print("exchange: \t", A[largest], "\t <--> \t", A[i], " - ", A)
         A[largest], A[i] = A[i], A[largest]
         max_heapify(A, largest, length)
 
@@ -53,10 +53,43 @@ def heap_sort(A: list) -> None:
             print("-" * 80)
 
 
+def heap_maximum(A: list) -> int:
+    return A[1]
+
+
+def heap_extract_max(A: list) -> int:
+    length = len(A) - 1
+    if length < 1:
+        raise OverflowError()
+
+    max_item = A[1]
+    A[1] = A[-1]
+    A.pop()
+    length = len(A) - 1
+    max_heapify(A, 1, length)
+
+    return max_item
+
+
 if __name__ == "__main__":
     DEBUG = True
 
     A = [0, 16, 14, 10, 8, 7, 9, 3, 2, 4, 1]
-    print(A)
-    heap_sort(A)
-    print(A)
+    length = len(A) - 1
+
+    from copy import deepcopy
+    sorted_heap = deepcopy(A)
+    heap_sort(sorted_heap)
+    print(sorted_heap)
+
+    print("*" * 80)
+
+    max_queue = deepcopy(A)
+    build_max_heap(max_queue, length)
+    for i in range(length, 0, -1):
+        print(heap_maximum(max_queue))
+        max_item = heap_extract_max(max_queue)
+        print(max_queue, " -> ", max_item)
+        print("-" * 80)
+
+    print("*" * 80)
