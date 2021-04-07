@@ -67,7 +67,7 @@ class MaxHeap:
         return sorted_array
 
     def extract_maximum(self) -> int:
-        if self.length < 0:
+        if self.length <= 0:
             raise OverflowError()
 
         max_item = self._data[1]
