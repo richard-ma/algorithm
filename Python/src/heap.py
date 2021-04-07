@@ -1,3 +1,8 @@
+from sys import maxsize
+
+INT_MAX = maxsize
+INT_MIN = -maxsize-1
+
 DEBUG = False
 
 
@@ -71,6 +76,21 @@ def heap_extract_max(A: list) -> int:
     return max_item
 
 
+def heap_increase_key(A: list, i: int, key: int) -> None:
+    if key < A[i]:
+        raise OverflowError()
+
+    A[i] = key
+    while i > 1 and A[parent(i)] < A[i]:
+        A[i], A[parent(i)] = A[parent(i)], A[i]
+        i = parent(i)
+
+
+def max_heap_insert(A: list, key: int) -> None:
+    A.append(INT_MIN)
+    heap_increase_key(A, len(A)-1, key)
+
+
 if __name__ == "__main__":
     DEBUG = True
 
@@ -91,5 +111,19 @@ if __name__ == "__main__":
         max_item = heap_extract_max(max_queue)
         print(max_queue, " -> ", max_item)
         print("-" * 80)
+
+    print("*" * 80)
+
+    insert_queue = deepcopy(A)
+    build_max_heap(insert_queue, length)
+    max_heap_insert(insert_queue, 100)
+    print(insert_queue)
+    max_heap_insert(insert_queue, 103)
+    print(insert_queue)
+    max_heap_insert(insert_queue, 88)
+    print(insert_queue)
+
+    heap_sort(insert_queue)
+    print(insert_queue)
 
     print("*" * 80)
