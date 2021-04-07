@@ -2,9 +2,10 @@ import unittest
 import random
 from Python.src.maxheap import *
 from Python.src.helper import *
+from Python.tests.helper import *
 
 
-class MaxHeapTestCase(unittest.TestCase):
+class MaxHeapTestCase(MyTestCase):
     @staticmethod
     def check_max_heap(array: list):
         test_array = [0]
@@ -16,15 +17,7 @@ class MaxHeapTestCase(unittest.TestCase):
         return True
 
     def setUp(self):
-        self.l_bound, self.u_bound = -10000, 10000
-        self.min_array_length, self.max_array_length = 50, 100
-        self.random_test_times = 100
-
-    def create_random_array(self):
-        return random.sample(
-            range(self.l_bound, self.u_bound),
-            random.randint(self.min_array_length, self.max_array_length)
-        )
+        self.mySetUp()
 
     def test_length(self):
         random_array = self.create_random_array()

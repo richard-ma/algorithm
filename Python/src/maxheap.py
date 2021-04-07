@@ -15,11 +15,15 @@ class MaxHeap:
 
     @property
     def data(self) -> list:
-        return self._data[1:]
+        return MaxHeap.remove_first(self._data)
 
     @property
     def maximum(self) -> int:
         return self._data[1]
+
+    @staticmethod
+    def remove_first(array: list):
+        return array[1:]
 
     @staticmethod
     def parent(idx: int) -> int:
@@ -64,7 +68,7 @@ class MaxHeap:
             array_length -= 1
             MaxHeap.max_heapify(sorted_array, 1, array_length)
 
-        return sorted_array
+        return MaxHeap.remove_first(sorted_array)
 
     def extract_maximum(self) -> int:
         if self.length <= 0:
