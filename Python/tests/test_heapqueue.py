@@ -42,6 +42,27 @@ class MyTestCase(unittest.TestCase):
                 max_item_by_heap_extract_max
             )
 
+    def test_heap_increase_key(self):
+        build_max_heap(self.data, len(self.data)-1)
+
+        with self.assertRaises(OverflowError):
+            heap_increase_key(self.data, len(self.data)-1, 0)
+
+        heap_increase_key(self.data, len(self.data)-1, 11)
+        self.assertEqual(
+            self.data,
+            [0, 16, 14, 10, 8, 11, 9, 3, 2, 4, 7]
+        )
+
+    def test_max_heap_insert(self):
+        build_max_heap(self.data, len(self.data)-1)
+
+        max_heap_insert(self.data, 11)
+        self.assertEqual(
+            self.data,
+            [0, 16, 14, 10, 8, 11, 9, 3, 2, 4, 1, 7]
+        )
+
 
 if __name__ == '__main__':
     unittest.main()
