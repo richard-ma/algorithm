@@ -85,7 +85,7 @@ def heap_increase_key(A: list, i: int, key: int) -> None:
 
 def max_heap_insert(A: list, key: int) -> None:
     A.append(INT_MIN)
-    heap_increase_key(A, len(A)-1, key)
+    heap_increase_key(A, len(A) - 1, key)
 
 
 if __name__ == "__main__":
@@ -95,6 +95,7 @@ if __name__ == "__main__":
     length = len(A) - 1
 
     from copy import deepcopy
+
     sorted_heap = deepcopy(A)
     heap_sort(sorted_heap)
     print(sorted_heap)
