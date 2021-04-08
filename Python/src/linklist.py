@@ -1,80 +1,69 @@
-from Python.src.helper import *
+class LinkList:
+    class Node:
+        def __init__(self, value=None):
+            self.prev = None
+            self.value = value
+            self.next = None
 
+    def __init__(self):
+        self.nil_ptr = LinkList.Node()
+        self.nil_ptr.next = self.nil_ptr
+        self.nil_ptr.prev = self.nil_ptr
 
-class ListNode:
-    def __init__(self, v):
-        self.prev = None
-        self.value = v
-        self.next = None
+    def is_empty(self):
+        return self.nil_ptr.next == self.nil_ptr
 
+    def print(self, end='\n'):
+        ptr = self.nil_ptr.next
+        while ptr != self.nil_ptr:
+            print(ptr.value, ' ', end='')
+            ptr = ptr.next
+        print(end=end)
 
-def list_print(head) -> None:
-    ptr = head
-    while ptr is not None:
-        print(ptr.value, ' ', end='')
-        ptr = ptr.next
-    print()
+    def _insert(self, x):
+        x.next = self.nil_ptr.next
+        self.nil_ptr.next.prev = x
+        self.nil_ptr.next = x
+        x.prev = self.nil_ptr
 
+    def insert(self, x):
+        node = LinkList.Node(x)
+        self._insert(node)
 
-def list_insert(head, x: ListNode):
-    x.next = head
-    if head is not None:
-        head.prev = x
-    head = x
-    x.prev = None
-
-    return head
-
-
-def list_delete(head, x: ListNode):
-    if x.prev is not None:
+    def _delete(self, x):
         x.prev.next = x.next
-    else:
-        head = x.next
-
-    if x.next is not None:
         x.next.prev = x.prev
 
-    return head
+    def delete(self, x):
+        self._delete(x)
 
+    def search(self, k):
+        ptr = self.nil_ptr.next
+        while ptr != self.nil_ptr and ptr.value != k:
+            ptr = ptr.next
 
-def list_search(head, k):
-    x = head
-    while x is not None and x.value != k:
-        x = x.next
-
-    return x
+        if ptr == self.nil_ptr:
+            ptr = None
+        return ptr
 
 
 if __name__ == "__main__":
     array = [16, 14, 10, 8, 7, 9, 3, 2, 4, 1]
-    length = len(array)
 
-    head = None
-    # insert
+    l = LinkList()
     for item in array:
-        node = ListNode(item)
-        head = list_insert(head, node)
-    list_print(head)
+        l.insert(item)
+    l.print()
 
-    # search
-    k = 7
-    x = list_search(head, k)
-    if x is not None:
-        print("SEARCH: ", x.value)
-    else:
-        print("NOT SEARCH: ", k)
-    k = 13
-    x = list_search(head, k)
-    if x is not None:
-        print("SEARCH: ", x.value)
-    else:
-        print("NOT SEARCH: ", k)
+    result = l.search(9)
+    if result is not None:
+        print(result.value)
+    result = l.search(33)
+    if result is None:
+        print("Result is None.")
 
-    # delete
-    while head is not None:
-        head = list_delete(head, head)
-        list_print(head)
-
-    print("** END **")
-
+    while not l.is_empty():
+        node = l.nil_ptr.next
+        l.delete(node)
+        l.print(end='')
+        print(" -> ", node.value)
