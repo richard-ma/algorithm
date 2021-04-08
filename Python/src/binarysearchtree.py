@@ -3,9 +3,9 @@ def _search(x, k):
         return x
 
     if k < x.value:
-        return search(x.left, k)
+        return _search(x.left, k)
     else:
-        return search(x.right, k)
+        return _search(x.right, k)
 
 
 def _search_iterative(x, k):
@@ -121,10 +121,18 @@ class BinarySearchTree:
             self.root = x
         elif y == y.parent.left:
             y.parent.left = x
+        else:
+            y.parent.right = x
+
+        if y != z:
+            z.value = y.value
+
+        return y
 
     def delete(self, z):
         node = self.search(z)
-        self._delete(node)
+        if node is not None:
+            self._delete(node)
 
 
 if __name__ == "__main__":
