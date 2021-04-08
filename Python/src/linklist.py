@@ -35,7 +35,8 @@ class LinkList:
         x.next.prev = x.prev
 
     def delete(self, x):
-        self._delete(x)
+        node = self.search(x)
+        self._delete(node)
 
     def search(self, k):
         ptr = self.nil_ptr.next
@@ -62,8 +63,7 @@ if __name__ == "__main__":
     if result is None:
         print("Result is None.")
 
-    while not l.is_empty():
-        node = l.nil_ptr.next
-        l.delete(node)
+    for item in array:
+        l.delete(item)
         l.print(end='')
-        print(" -> ", node.value)
+        print(" -> ", item)
