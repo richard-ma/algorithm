@@ -65,9 +65,6 @@ class BinarySearchTree:
     def __init__(self):
         self.root = None
 
-    def is_none(self, x):
-        return x is None
-
     def inorder_walk(self, root):
         if root is not None:
             self.inorder_walk(root.left)
