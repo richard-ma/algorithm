@@ -59,13 +59,16 @@ class BinarySearchTree:
             self.left = None
             self.right = None
 
+        def print(self, end=''):
+            print(self.value, end=end)
+
     def __init__(self):
         self.root = None
 
     def inorder_walk(self, root):
         if root is not None:
             self.inorder_walk(root.left)
-            print(root.value, end=' ')
+            root.print(end=' ')
             self.inorder_walk(root.right)
 
     def print(self, end='\n'):
@@ -146,7 +149,7 @@ if __name__ == "__main__":
 
     result = bst.search(8)
     if result is not None:
-        print(result.value)
+        result.print
 
     result = bst.search(33)
     if result is None:
