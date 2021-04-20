@@ -1,4 +1,4 @@
-class Queue:
+class MyQueue:
     def __init__(self, size: int = 4) -> None:
         self.length = size
         self.buffer = [0] * (self.length + 1)
