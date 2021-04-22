@@ -87,21 +87,46 @@ class BTree:
         else:
             self._insert_nonfull(r, k)
 
+    def _search(self, x, k):
+        i = 0
+        while i <= x.n and k > x.keys[i]:
+            i += 1
+        if i <= x.n and k == x.keys[i]:
+            return x, i
+        if x.leaf:
+            return None, None
+        else:
+            return self._search(x.childs[i], k)
+
+    def search(self, k):
+        return self._search(self.root, k)
+
 
 if __name__ == "__main__":
+    DEBUG = False
+
     from random import shuffle
     array = [2, 3, 5, 7, 11, 13, 15, 17, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
-    test_times = 10000
 
-    for i in range(0, test_times):
-        # random shuffle array
-        shuffle(array)
+    bt = BTree(t=3)
+    for item in array:
+        print('*' * 80)
+        bt.insert(item)
+        print('**', item, '**')
+        bt.print()
+    print('*' * 80)
 
-        bt = BTree(t=3)
-        for item in array:
-            print('*' * 80)
-            bt.insert(item)
-            print('**', item, '**')
-            bt.print()
+    node, i = bt.search(11)
+    if node is not None:
+        print('[', i, ']', node.keys)
 
-        print('****', i, '****')
+    if DEBUG:
+        test_times = 10000
+        for i in range(0, test_times):
+            # random shuffle array
+            shuffle(array)
+
+            bt = BTree(t=3)
+            for item in array:
+                bt.insert(item)
+            print('****', i, '****')
