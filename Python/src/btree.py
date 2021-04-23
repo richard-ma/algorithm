@@ -4,10 +4,11 @@ from Python.src.helper import *
 class BTree:
     class Node:
         def __init__(self, t):
-            self.keys = [INT_MIN] * (2 * t - 1)
-            self.childs = [None] * (2 * t)
             self.leaf = True
             self.n = 0
+            self.parent = None
+            self.keys = [INT_MIN] * (2 * t - 1)
+            self.childs = [None] * (2 * t)
 
     def __init__(self, t=2, none=None):
         self.t = t
@@ -37,6 +38,7 @@ class BTree:
     def _split_child(self, x, i, y):
         z = BTree.Node(self.t)
         z.leaf = y.leaf
+        z.parent = y.parent
         z.n = self.t - 1
         for j in range(0, self.t-1):
             z.keys[j] = y.keys[j+self.t]
@@ -82,6 +84,7 @@ class BTree:
             s.leaf = False
             s.n = 0
             s.childs[0] = r
+            r.parent = s
             self._split_child(s, 0, r)
             self._insert_nonfull(s, k)
         else:
@@ -100,6 +103,36 @@ class BTree:
 
     def search(self, k):
         return self._search(self.root, k)
+
+    def predecessor(self, x, i):
+        if x.leaf:
+            if i == 0:
+                k = x.keys[i]
+                if k < x.parent.keys[0]:
+                    return None
+                j = 1
+                while k > x.parent.keys[j]:
+                    j += 1
+                return x.parent, j
+            else:
+                return x, i-1
+        else:
+            return x.childs[i].keys[x.childs[i].n-1]
+
+    def successor(self, x, i):
+        if x.leaf:
+            if i == x.n-1:
+                k = x.keys[i]
+                if k > x.parent.keys[x.parent.n-1]:
+                    return None
+                j = 0
+                while k > x.parent.keys[j]:
+                    j += 1
+                return x.parent, j+1
+            else:
+                return x, i+1
+        else:
+            return x.childs[i+1].keys[0]
 
     def _delete(self, x, k):
         i = 0
