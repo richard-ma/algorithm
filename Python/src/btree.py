@@ -89,9 +89,9 @@ class BTree:
 
     def _search(self, x, k):
         i = 0
-        while i <= x.n and k > x.keys[i]:
+        while i < x.n and k > x.keys[i]:
             i += 1
-        if i <= x.n and k == x.keys[i]:
+        if i < x.n and k == x.keys[i]:
             return x, i
         if x.leaf:
             return None, None
@@ -101,11 +101,24 @@ class BTree:
     def search(self, k):
         return self._search(self.root, k)
 
+    def _delete(self, x, k):
+        i = 0
+        while i < x.n and k > x.keys[i]:
+            i += 1
+
+        if k == x.keys[i]:
+            if x.leaf:
+                for j in range(i, x.n-1):
+                    x.keys[j] = x.keys[j+1]
+                x.n -= 1
+            else:
+                if x.childs[i].n >= self.t:
+                    pass
+
 
 if __name__ == "__main__":
     DEBUG = False
 
-    from random import shuffle
     array = [2, 3, 5, 7, 11, 13, 15, 17, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
 
     bt = BTree(t=3)
@@ -116,17 +129,6 @@ if __name__ == "__main__":
         bt.print()
     print('*' * 80)
 
-    node, i = bt.search(11)
+    node, i = bt.search(97)
     if node is not None:
         print('[', i, ']', node.keys)
-
-    if DEBUG:
-        test_times = 10000
-        for i in range(0, test_times):
-            # random shuffle array
-            shuffle(array)
-
-            bt = BTree(t=3)
-            for item in array:
-                bt.insert(item)
-            print('****', i, '****')
