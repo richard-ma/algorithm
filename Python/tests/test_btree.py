@@ -20,6 +20,16 @@ class BTreeTestCase(MyTestCase):
 
         return bt
 
+    def test_minimum(self):
+        bt = self._build_tree()
+        node, idx = bt.minimum()
+        self.assertEqual(node.keys[idx], self.array[0])
+
+    def test_maximum(self):
+        bt = self._build_tree()
+        node, idx = bt.maximum()
+        self.assertEqual(node.keys[idx], self.array[-1])
+
     def test_predecessor(self):
         bt = self._build_tree()
         self.assertIsNone(bt.predecessor(*bt.search(2)))

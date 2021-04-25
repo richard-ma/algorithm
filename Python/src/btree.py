@@ -104,20 +104,36 @@ class BTree:
     def search(self, k):
         return self._search(self.root, k)
 
+    def _minimum(self, x):
+        while x.n > 0 and x.childs[0] is not None:
+            x = x.childs[0]
+        return x, 0
+
+    def minimum(self):
+        return self._minimum(self.root)
+
+    def _maximum(self, x):
+        while x.n > 0 and x.childs[x.n] is not None:
+            x = x.childs[x.n]
+        return x, x.n-1
+
+    def maximum(self):
+        return self._maximum(self.root)
+
     def predecessor(self, x, i):
         if x.leaf:
             if i == 0:
                 k = x.keys[i]
-                if k < x.parent.keys[0]:
+                if k < x.parent.keys[i]:
                     return None
                 j = 1
-                while k > x.parent.keys[j]:
+                while j < x.parent.n and k > x.parent.keys[j]:
                     j += 1
                 return x.parent, j
             else:
                 return x, i-1
         else:
-            return x.childs[i].keys[x.childs[i].n-1]
+            return x.childs[i], x.childs[i].n-1
 
     def successor(self, x, i):
         if x.leaf:
@@ -126,13 +142,13 @@ class BTree:
                 if k > x.parent.keys[x.parent.n-1]:
                     return None
                 j = 0
-                while k > x.parent.keys[j]:
+                while j < x.parent.n and k > x.parent.keys[j]:
                     j += 1
                 return x.parent, j+1
             else:
                 return x, i+1
         else:
-            return x.childs[i+1].keys[0]
+            return x.childs[i+1], 0
 
     def _delete(self, x, k):
         i = 0
@@ -162,6 +178,6 @@ if __name__ == "__main__":
         bt.print()
     print('*' * 80)
 
-    node, i = bt.search(97)
-    if node is not None:
-        print('[', i, ']', node.keys)
+    for i in range(1, len(array)):
+        node, idx = bt.predecessor(*bt.search(array[i]))
+        print(array[i - 1], node.keys[idx])
