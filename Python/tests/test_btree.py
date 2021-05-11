@@ -32,7 +32,7 @@ class BTreeTestCase(MyTestCase):
 
     def test_predecessor(self):
         bt = self._build_tree()
-        self.assertIsNone(bt.predecessor(*bt.search(2)))
+        self.assertEqual(bt.predecessor(*bt.search(2)), (None, None))
 
         for i in range(1, len(self.array)):
             node, idx = bt.predecessor(*bt.search(self.array[i]))

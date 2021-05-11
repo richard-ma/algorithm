@@ -40,33 +40,33 @@ class BTree:
         z.leaf = y.leaf
         z.parent = y.parent
         z.n = self.t - 1
-        for j in range(0, self.t-1):
-            z.keys[j] = y.keys[j+self.t]
+        for j in range(0, self.t - 1):
+            z.keys[j] = y.keys[j + self.t]
 
         if not y.leaf:
             for j in range(0, self.t):
-                z.childs[j] = y.childs[j+self.t]
+                z.childs[j] = y.childs[j + self.t]
         y.n = self.t - 1
 
         for j in range(x.n, i, -1):
-            x.childs[j+1] = x.childs[j]
-        x.childs[i+1] = z
+            x.childs[j + 1] = x.childs[j]
+        x.childs[i + 1] = z
 
-        for j in range(x.n-1, i-1, -1):
-            x.keys[j+1] = x.keys[j]
-        x.keys[i] = y.keys[self.t-1]
+        for j in range(x.n - 1, i - 1, -1):
+            x.keys[j + 1] = x.keys[j]
+        x.keys[i] = y.keys[self.t - 1]
         x.n += 1
 
     def _insert_nonfull(self, x, k):
         i = x.n
         if x.leaf:
-            while i > 0 and k < x.keys[i-1]:
-                x.keys[i] = x.keys[i-1]
+            while i > 0 and k < x.keys[i - 1]:
+                x.keys[i] = x.keys[i - 1]
                 i -= 1
             x.keys[i] = k
             x.n += 1
         else:
-            while i > 0 and k < x.keys[i-1]:
+            while i > 0 and k < x.keys[i - 1]:
                 i -= 1
             if x.childs[i].n == self.t * 2 - 1:
                 self._split_child(x, i, x.childs[i])
@@ -115,54 +115,36 @@ class BTree:
     def _maximum(self, x):
         while x.n > 0 and x.childs[x.n] is not None:
             x = x.childs[x.n]
-        return x, x.n-1
+        return x, x.n - 1
 
     def maximum(self):
         return self._maximum(self.root)
 
     def predecessor(self, x, i):
-        if x.leaf:
-            if i == 0:
-                k = x.keys[i]
-                if k < x.parent.keys[i]:
-                    return None
-                j = 1
-                while j < x.parent.n and k > x.parent.keys[j]:
-                    j += 1
-                return x.parent, j
-            else:
-                return x, i-1
-        else:
-            return x.childs[i], x.childs[i].n-1
+        if not x.leaf:
+            return self._minimum(x.child[i])
+        if i > 0:
+            return x, i - 1
+        if (x, i) == self.minimum():
+            return None, None
+        y = x.parent
+        j = 0
+        while x.keys[i] > y.keys[j]:
+            j += 1
+        return y, j
 
     def successor(self, x, i):
-        if x.leaf:
-            if i == x.n-1:
-                k = x.keys[i]
-                if k > x.parent.keys[x.parent.n-1]:
-                    return None
-                j = 0
-                while j < x.parent.n and k > x.parent.keys[j]:
-                    j += 1
-                return x.parent, j+1
-            else:
-                return x, i+1
-        else:
-            return x.childs[i+1], 0
+        if x.childs[i + 1] is not None:
+            return self._minimum(x.childs[i + 1])
+
+        k = x.keys[i]
+        y = x.parent
+        i_parent = 0
+        while y.n > 0 and k > y.keys[i_parent]:
+            i_parent += 1
 
     def _delete(self, x, k):
-        i = 0
-        while i < x.n and k > x.keys[i]:
-            i += 1
-
-        if k == x.keys[i]:
-            if x.leaf:
-                for j in range(i, x.n-1):
-                    x.keys[j] = x.keys[j+1]
-                x.n -= 1
-            else:
-                if x.childs[i].n >= self.t:
-                    pass
+        pass
 
 
 if __name__ == "__main__":
