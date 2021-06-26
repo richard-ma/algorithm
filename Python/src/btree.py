@@ -1,10 +1,5 @@
 from Python.src.helper import *
-
-
-class Entity:
-    def __init__(self, key, value):
-        self.key = key
-        self.value = value
+from Python.src.entity import Entity
 
 
 class Node:
