@@ -1,165 +1,173 @@
 from Python.src.helper import *
+from Python.src.entity import Entity
+
+
+class Node:
+    def __init__(self):
+        self.parent = None
+        self.entitys = list()
+        self.childs = list()
+
+    def find(self, key):
+        for e in self.entitys:
+            if e.key == key:
+                return e
+
+    def delete(self, key):
+        for pos, e in enumerate(self.entitys):
+            if e.key == key:
+                del self.entitys[pos]
+                return pos, e
+
+    def isLeaf(self):
+        return len(self.childs) == 0
+
+    def addEntity(self, entity):
+        self.entitys.append(entity)
+        self.entitys.sort(key=lambda x: x.key)
+
+    def addChild(self, n):
+        self.childs.append(n)
+        n.parent = self
+        self.childs.sort(key=lambda x: x.entitys[0].key)
 
 
 class BTree:
-    class Node:
-        def __init__(self, t):
-            self.leaf = True
-            self.n = 0
-            self.parent = None
-            self.keys = [INT_MIN] * (2 * t - 1)
-            self.childs = [None] * (2 * t)
+    def __init__(self, size=6):
+        self.size = size
+        self.root = None
+        self.length = 0
 
-    def __init__(self, t=2, none=None):
-        self.t = t
-        self.none = none
-        self.root = self.none
+    def add(self, key, value=None):
+        self.length += 1
 
-        self._create()
+        if self.root:
+            current = self.root
+            while not current.isLeaf():
+                for pos, e in enumerate(current.entitys):
+                    if e.key > key:
+                        current = current.childs[pos]
+                        break
+                    elif e.key == key:
+                        e.value = value
+                        self.length -= 1
+                        return
+                else:
+                    current = current.childs[-1]
 
-    def _print(self, root):
-        print('[', root.n, ']', sep='', end=' ')
-        for i in range(0, root.n):
-            print(root.keys[i], end=' ')
-        print()
-        for item in root.childs:
-            if item is not None:
-                self._print(item)
+            current.addEntity(Entity(key, value))
 
-    def print(self):
-        self._print(self.root)
-
-    def _create(self):
-        x = BTree.Node(self.t)
-        x.leaf = True
-        x.n = 0
-        self.root = x
-
-    def _split_child(self, x, i, y):
-        z = BTree.Node(self.t)
-        z.leaf = y.leaf
-        z.parent = y.parent
-        z.n = self.t - 1
-        for j in range(0, self.t - 1):
-            z.keys[j] = y.keys[j + self.t]
-
-        if not y.leaf:
-            for j in range(0, self.t):
-                z.childs[j] = y.childs[j + self.t]
-        y.n = self.t - 1
-
-        for j in range(x.n, i, -1):
-            x.childs[j + 1] = x.childs[j]
-        x.childs[i + 1] = z
-
-        for j in range(x.n - 1, i - 1, -1):
-            x.keys[j + 1] = x.keys[j]
-        x.keys[i] = y.keys[self.t - 1]
-        x.n += 1
-
-    def _insert_nonfull(self, x, k):
-        i = x.n
-        if x.leaf:
-            while i > 0 and k < x.keys[i - 1]:
-                x.keys[i] = x.keys[i - 1]
-                i -= 1
-            x.keys[i] = k
-            x.n += 1
+            if len(current.entitys) > self.size:
+                self.__split(current)
         else:
-            while i > 0 and k < x.keys[i - 1]:
-                i -= 1
-            if x.childs[i].n == self.t * 2 - 1:
-                self._split_child(x, i, x.childs[i])
+            self.root = Node()
+            self.root.addEntity(Entity(key, value))
 
-                if k > x.keys[i]:
-                    i += 1
+    def get(self, key):
+        n = self.__findNode(key)
+        if n:
+            return n.find(key).value
 
-            self._insert_nonfull(x.childs[i], k)
+    def delete(self, key):
+        node = self.__findNode(key)
 
-    def insert(self, k):
-        r = self.root
-        if r.n == self.t * 2 - 1:
-            s = BTree.Node(self.t)
-            self.root = s
-            s.leaf = False
-            s.n = 0
-            s.childs[0] = r
-            r.parent = s
-            self._split_child(s, 0, r)
-            self._insert_nonfull(s, k)
-        else:
-            self._insert_nonfull(r, k)
+        if node:
+            pos_i, e = node.delete(key)
 
-    def _search(self, x, k):
-        i = 0
-        while i < x.n and k > x.keys[i]:
-            i += 1
-        if i < x.n and k == x.keys[i]:
-            return x, i
-        if x.leaf:
-            return None, None
-        else:
-            return self._search(x.childs[i], k)
+            if not node.isLeaf():
+                child = node.childs[pos_i]
+                pos_j, entity = child.delete(child.entitys[-1].key)
+                node.addEntity(entity)
 
-    def search(self, k):
-        return self._search(self.root, k)
+                while not child.isLeaf():
+                    node = child
+                    child = child.childs[pos_j]
+                    pos_j, entity = child.delete(child.entitys[-1].key)
+                    node.addEntity(entity)
 
-    def _minimum(self, x):
-        while x.n > 0 and x.childs[0] is not None:
-            x = x.childs[0]
-        return x, 0
+            self.length -= 1
+            return e.value
 
-    def minimum(self):
-        return self._minimum(self.root)
+    def isEmpty(self):
+        return self.length == 0
 
-    def _maximum(self, x):
-        while x.n > 0 and x.childs[x.n] is not None:
-            x = x.childs[x.n]
-        return x, x.n - 1
+    def __findNode(self, key):
+        if self.root:
+            current = self.root
 
-    def maximum(self):
-        return self._maximum(self.root)
+            while not current.isLeaf():
+                for i, e in enumerate(current.entitys):
+                    if e.key > key:
+                        current = current.childs[i]
+                        break
+                    elif e.key == key:
+                        return current
+                else:
+                    current = current.childs[-1]
 
-    def predecessor(self, x, i):
-        if not x.leaf:
-            return self._minimum(x.child[i])
-        if i > 0:
-            return x, i - 1
-        if (x, i) == self.minimum():
-            return None, None
-        y = x.parent
-        j = 0
-        while x.keys[i] > y.keys[j]:
-            j += 1
-        return y, j
+            if current.find(key):
+                return current
 
-    def successor(self, x, i):
-        if x.childs[i + 1] is not None:
-            return self._minimum(x.childs[i + 1])
+    def __split(self, node):
+        middle = len(node.entitys) // 2
+        top = node.entitys[middle]
+        right = Node()
 
-        k = x.keys[i]
-        y = x.parent
-        i_parent = 0
-        while y.n > 0 and k > y.keys[i_parent]:
-            i_parent += 1
+        for e in node.entitys[middle+1:]:
+            right.addEntity(e)
+        for n in node.childs[middle+1:]:
+            right.addChild(n)
 
-    def _delete(self, x, k):
-        pass
+        node.entitys = node.entitys[:middle]
+        node.childs = node.childs[:middle+1]
+
+        parent = node.parent
+
+        if parent:
+            parent.addEntity(top)
+            parent.addChild(right)
+
+            if len(parent.entitys) > self.size:
+                self.__split(parent)
+            self.root.addEntity(top)
+            self.root.addChild(node)
+            self.root.addChild(right)
 
 
 if __name__ == "__main__":
-    DEBUG = False
+    t = BTree(4)
+    t.add(20)
+    t.add(40)
+    t.add(60)
+    t.add(70, 'c')
+    t.add(80)
+    t.add(10)
+    t.add(30)
+    t.add(15, 'python')
+    t.add(75, 'java')
+    t.add(85)
+    t.add(90)
+    t.add(25)
+    t.add(35, 'c#')
+    t.add(50)
+    t.add(22, 'c++')
+    t.add(27)
+    t.add(32)
+
+    print(t.get(15))
+    print(t.get(75))
+    print(t.delete(35))
+    print(t.delete(22))
+    t.add(22, 'lua')
+    print(t.get(22))
+    print(t.length)
 
     array = [2, 3, 5, 7, 11, 13, 15, 17, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97]
 
-    bt = BTree(t=3)
-    for item in array:
-        print('*' * 80)
-        bt.insert(item)
-        print('**', item, '**')
-        bt.print()
-    print('*' * 80)
+    bt = BTree(size=3)
 
-    for i in range(1, len(array)):
-        node, idx = bt.predecessor(*bt.search(array[i]))
-        print(array[i - 1], node.keys[idx])
+    print('*' * 80)
+    for item in array:
+        bt.add(item)
+        print('**', item, '**')
+    print('*' * 80)
