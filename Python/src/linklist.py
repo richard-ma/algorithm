@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class LinkList:
     class Node:
         def __init__(self, value=None):
@@ -70,6 +73,42 @@ class LinkList:
         self.nil_ptr.next = x_prev
         x_prev.prev = self.nil_ptr
 
+    def merge(self, ll: LinkList):
+        if ll.is_empty():
+            return
+
+        if self.is_empty():
+            self.nil_ptr.next = ll.nil_ptr.next
+            return
+
+        self_ptr = self.nil_ptr.next
+        ll_ptr = ll.nil_ptr.next
+
+        while self_ptr != self.nil_ptr and ll_ptr != ll.nil_ptr:
+            if ll_ptr.value < self_ptr.value:  # insert ll_ptr in front of self_ptr
+                ll_ptr.next.prev = ll_ptr.prev
+                ll_ptr.prev.next = ll_ptr.next
+
+                ll_ptr.prev = self_ptr.prev
+                self_ptr.prev.next = ll_ptr
+                self_ptr.prev = ll_ptr
+
+                ll_ptr = ll_ptr.next  # update ll_ptr
+
+                self_ptr.prev.next = self_ptr
+            else:
+                self_ptr = self_ptr.next  # update self_ptr
+
+        if ll_ptr != ll.nil_ptr:
+            self_ptr = self_ptr.prev  # last item of self
+            self_ptr.next = ll_ptr
+            ll_ptr.prev = self_ptr
+            while ll_ptr.next != ll.nil_ptr:
+                ll_ptr = ll_ptr.next
+            # ll_ptr is the last item of ll
+            ll_ptr.next = self.nil_ptr
+            self.nil_ptr.prev = ll_ptr
+
 
 if __name__ == "__main__":
     array = [16, 14, 10, 8, 7, 9, 3, 2, 4, 1]
@@ -90,8 +129,26 @@ if __name__ == "__main__":
     l.reverse()
     l.print()
 
-    # print("Delete List")
-    # for item in array:
-    #     l.delete(item)
-    #     l.print(end='')
-    #     print(" -> ", item)
+    print("Delete List")
+    for item in array:
+        l.delete(item)
+        l.print(end='')
+        print(" -> ", item)
+
+    array = [1, 27, 29]
+    array.reverse()
+    l1 = LinkList()
+    for item in array:
+        l1.insert(item)
+    l1.print()
+
+    array = [5, 9, 18, 40]
+    array.reverse()
+    l2 = LinkList()
+    for item in array:
+        l2.insert(item)
+    l2.print()
+
+    l1.merge(l2)
+    l1.print()
+
