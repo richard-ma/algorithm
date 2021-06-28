@@ -47,6 +47,29 @@ class LinkList:
             ptr = None
         return ptr
 
+    def reverse(self, method="iterate"):
+        if method == "iterate":
+            return self._reverse_iterate()
+
+    def _reverse_iterate(self):
+        if self.is_empty() or self.nil_ptr.next.next == self.nil_ptr:
+            return
+
+        x_prev = self.nil_ptr
+        x = self.nil_ptr.next
+        x_next = self.nil_ptr.next.next
+
+        while x != self.nil_ptr:
+            x.next = x_prev
+            x_prev.prev = x
+
+            x_prev = x
+            x = x_next
+            x_next = x_next.next
+
+        self.nil_ptr.next = x_prev
+        x_prev.prev = self.nil_ptr
+
 
 if __name__ == "__main__":
     array = [16, 14, 10, 8, 7, 9, 3, 2, 4, 1]
@@ -63,7 +86,12 @@ if __name__ == "__main__":
     if result is None:
         print("Result is None.")
 
-    for item in array:
-        l.delete(item)
-        l.print(end='')
-        print(" -> ", item)
+    print("Reverse List")
+    l.reverse()
+    l.print()
+
+    # print("Delete List")
+    # for item in array:
+    #     l.delete(item)
+    #     l.print(end='')
+    #     print(" -> ", item)
