@@ -46,7 +46,9 @@ class BinomialHeap:
         self.head = None
 
     def print(self):
+        print('*' * 20, 'print start', '*' * 20)
         Node.print(self.head)
+        print('*' * 20, 'print end', '*' * 20)
 
     def print_root_list(self):
         print('*' * 20, 'root list start', '*' * 20)
@@ -79,7 +81,7 @@ class BinomialHeap:
 
         current_ptr = None
         while origin_ptr is not None and other_ptr is not None:
-            if origin_ptr.entity.key <= other_ptr.entity.key:
+            if origin_ptr.degree <= other_ptr.degree:
                 current_node = origin_ptr
                 origin_ptr = origin_ptr.sibling
             else:
@@ -101,7 +103,6 @@ class BinomialHeap:
 
     def union(self, other: BinomialHeap):
         self.merge(other)
-        self.print_root_list()
 
         if self.head is None:
             return
@@ -142,6 +143,4 @@ if __name__ == "__main__":
     bh = BinomialHeap()
     for num in array:
         bh.insert(Node(Entity(num)))
-
-    print('*' * 80)
-    bh.print()
+        bh.print()
