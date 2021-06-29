@@ -19,10 +19,39 @@ class Node:
         z.child = self
         z.degree += 1
 
+    @staticmethod
+    def print_node(node: Node, level: int):
+        print(" " * (level * 4), end='')
+        print("[", node.degree, node.entity.key, node.entity.value, "]", sep=':')
+
+    @staticmethod
+    def print(node: Node, level: int = None):
+        if node.parent is None:
+            level = 0
+        Node.print_node(node, level)
+        if node.child is not None:
+            Node.print(node.child, level+1)
+        if node.sibling is not None:
+            Node.print(node.sibling, level)
+
+    @staticmethod
+    def print_sibling(node: Node):
+        Node.print_node(node, 0)
+        if node.sibling is not None:
+            Node.print_sibling(node.sibling)
+
 
 class BinomialHeap:
     def __init__(self):
         self.head = None
+
+    def print(self):
+        Node.print(self.head)
+
+    def print_root_list(self):
+        print('*' * 20, 'root list start', '*' * 20)
+        Node.print_sibling(self.head)
+        print('*' * 20, 'root list end', '*' * 20)
 
     def minimum(self):
         y = None
@@ -72,6 +101,7 @@ class BinomialHeap:
 
     def union(self, other: BinomialHeap):
         self.merge(other)
+        self.print_root_list()
 
         if self.head is None:
             return
@@ -81,7 +111,7 @@ class BinomialHeap:
         next_x = self.head.sibling
 
         while next_x is not None:
-            if x.degree == next_x.degree or \
+            if x.degree != next_x.degree or \
                     (next_x.sibling is not None and next_x.sibling.degree == x.degree):
                 prev_x = x
                 x = next_x
@@ -112,3 +142,6 @@ if __name__ == "__main__":
     bh = BinomialHeap()
     for num in array:
         bh.insert(Node(Entity(num)))
+
+    print('*' * 80)
+    bh.print()
