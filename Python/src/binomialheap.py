@@ -12,6 +12,7 @@ class Node:
         self.child = None
         self.sibling = None
 
+    # 将现有节点作为z的子节点
     def link(self, z: Node):
         self.parent = z
         self.sibling = z.child
@@ -69,9 +70,45 @@ class BinomialHeap:
         if other_ptr is not None:
             current_ptr.sibling = other_ptr
 
-    def union(self, h2: BinomialHeap):
-        pass
+    def union(self, other: BinomialHeap):
+        self.merge(other)
+
+        if self.head is None:
+            return
+
+        prev_x = None
+        x = self.head
+        next_x = self.head.sibling
+
+        while next_x is not None:
+            if x.degree == next_x.degree or \
+                    (next_x.sibling is not None and next_x.sibling.degree == x.degree):
+                prev_x = x
+                x = next_x
+            elif x.entity.key <= next_x.entity.key:
+                x.sibling = next_x.sibling
+                next_x.link(x)
+            else:
+                if prev_x is None:
+                    self.head = next_x
+                else:
+                    prev_x.sibling = next_x
+                x.link(next_x)
+                x = next_x
+            next_x = next_x.sibling
+
+    def insert(self, x: Node):
+        other = BinomialHeap()
+        x.parent = None
+        x.child = None
+        x.sibling = None
+        x.degree = 0
+        other.head = x
+        self.union(other)
 
 
 if __name__ == "__main__":
+    array = [7, 27, 29, 5, 9, 18, 40]
     bh = BinomialHeap()
+    for num in array:
+        bh.insert(Node(Entity(num)))
