@@ -25,7 +25,10 @@ class Node:
     @staticmethod
     def print_node_data(node: Node, level: int):
         print(" " * (level * 4), end='')
-        print("[", node.degree, node.entity.key, node.entity.value, "]", sep=':')
+        print("[",
+              node.degree, node.entity.key, node.entity.value,
+              "p", node.parent, "c", node.child, "s", node.sibling,
+              "]", sep=':')
 
     @staticmethod
     def print_node(node: Node, level: int = 0):
@@ -90,23 +93,22 @@ class BinomialHeap:
 
         # remove x from root list
         if self.head == x:
-            self.head = None
+            self.head = x.sibling
         else:
             p = self.head
             while p.sibling is not None and p.sibling != x:
                 p = p.sibling
-            p.sibling = None
+            p.sibling = x.sibling
 
         other = BinomialHeap()
         other.head = x.child
         other.reverse_root_list()
-        other.print_root_list()
 
         self.union(other)  # 合并删除最小节点后的二项堆
 
         # clear x's pointers
         # x.parent is None
-        # x.sibling is None
+        x.sibling = None
         x.child = None
 
         return x
@@ -196,4 +198,6 @@ if __name__ == "__main__":
         if m is not None:
             print('REMOVE -> ', end='')
             m.print()
+        else:
+            print("m is None")
         bh.print()
