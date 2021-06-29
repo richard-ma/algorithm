@@ -19,24 +19,25 @@ class Node:
         z.child = self
         z.degree += 1
 
+    def print(self):
+        Node.print_node(self)
+
     @staticmethod
-    def print_node(node: Node, level: int):
+    def print_node_data(node: Node, level: int):
         print(" " * (level * 4), end='')
         print("[", node.degree, node.entity.key, node.entity.value, "]", sep=':')
 
     @staticmethod
-    def print(node: Node, level: int = None):
-        if node.parent is None:
-            level = 0
-        Node.print_node(node, level)
+    def print_node(node: Node, level: int = 0):
+        Node.print_node_data(node, level)
         if node.child is not None:
-            Node.print(node.child, level+1)
+            Node.print_node(node.child, level+1)
         if node.sibling is not None:
-            Node.print(node.sibling, level)
+            Node.print_node(node.sibling, level)
 
     @staticmethod
     def print_sibling(node: Node):
-        Node.print_node(node, 0)
+        Node.print_node_data(node, 0)
         if node.sibling is not None:
             Node.print_sibling(node.sibling)
 
@@ -47,12 +48,14 @@ class BinomialHeap:
 
     def print(self):
         print('*' * 20, 'print start', '*' * 20)
-        Node.print(self.head)
+        if self.head is not None:
+            Node.print_node(self.head)
         print('*' * 20, 'print end', '*' * 20)
 
     def print_root_list(self):
         print('*' * 20, 'root list start', '*' * 20)
-        Node.print_sibling(self.head)
+        if self.head is not None:
+            Node.print_sibling(self.head)
         print('*' * 20, 'root list end', '*' * 20)
 
     def minimum(self):
@@ -66,6 +69,48 @@ class BinomialHeap:
             x = x.sibling
         return y
 
+    def reverse_root_list(self):
+        if self.head is None or self.head.sibling is None:
+            return
+
+        # 原地头插法反转链表
+        x = self.head
+        x_next = x.sibling
+        while x_next is not None:
+            x.sibling = x.sibling.sibling
+            x_next.sibling = x
+            self.head = x_next
+
+            x_next = x.sibling
+
+    def extract_minimum(self) -> Node:
+        x = self.minimum()
+        if x is None:
+            return None
+
+        # remove x from root list
+        if self.head == x:
+            self.head = None
+        else:
+            p = self.head
+            while p.sibling is not None and p.sibling != x:
+                p = p.sibling
+            p.sibling = None
+
+        other = BinomialHeap()
+        other.head = x.child
+        other.reverse_root_list()
+        other.print_root_list()
+
+        self.union(other)  # 合并删除最小节点后的二项堆
+
+        # clear x's pointers
+        # x.parent is None
+        # x.sibling is None
+        x.child = None
+
+        return x
+
     def merge(self, other: BinomialHeap):
         origin = self
 
@@ -73,7 +118,7 @@ class BinomialHeap:
             return
 
         if origin.head is None:
-            origin.head = deepcopy(other.head)  # TODO: test delete h after merged h
+            origin.head = other.head  # TODO: test delete h after merged h
             return
 
         origin_ptr = origin.head
@@ -140,7 +185,15 @@ class BinomialHeap:
 
 if __name__ == "__main__":
     array = [7, 27, 29, 5, 9, 18, 40]
+    # array = [29, 40]
     bh = BinomialHeap()
     for num in array:
         bh.insert(Node(Entity(num)))
+        bh.print()
+
+    for idx in range(len(array)):
+        m = bh.extract_minimum()
+        if m is not None:
+            print('REMOVE -> ', end='')
+            m.print()
         bh.print()
