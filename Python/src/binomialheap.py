@@ -22,6 +22,20 @@ class Node:
     def print(self):
         Node.print_node(self)
 
+    def decrease_key(self, k):
+        if k > self.entity.key:
+            raise ValueError("new key is greater than current key")
+
+        self.entity.key = k
+        y = self
+        z = y.parent
+
+        while z is not None and y.entity.key < z.entity.key:
+            #  exchange y and z
+            y.entity, z.entity = z.entity, y.entity
+            y = z
+            z = y.parent
+
     @staticmethod
     def print_node_data(node: Node, level: int):
         print(" " * (level * 4), end='')
@@ -184,20 +198,31 @@ class BinomialHeap:
         other.head = x
         self.union(other)
 
+    def delete(self, node: Node):
+        node.decrease_key(INT_MIN)
+        self.extract_minimum()
+
 
 if __name__ == "__main__":
     array = [7, 27, 29, 5, 9, 18, 40]
     # array = [29, 40]
     bh = BinomialHeap()
+    nodes = dict()
     for num in array:
-        bh.insert(Node(Entity(num)))
+        node = Node(Entity(num))
+        nodes.update({str(num): node})
+        bh.insert(node)
         bh.print()
 
-    for idx in range(len(array)):
-        m = bh.extract_minimum()
-        if m is not None:
-            print('REMOVE -> ', end='')
-            m.print()
-        else:
-            print("m is None")
+    for key, node in nodes.items():
+        bh.delete(node)
         bh.print()
+
+    # for idx in range(len(array)):
+    #     m = bh.extract_minimum()
+    #     if m is not None:
+    #         print('REMOVE -> ', end='')
+    #         m.print()
+    #     else:
+    #         print("m is None")
+    #     bh.print()
